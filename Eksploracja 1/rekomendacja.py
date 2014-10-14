@@ -37,17 +37,15 @@ manhattan(users["Ania"],users["Ela"])
 print "Odległość w metryce taksówkowej użytkowników wynosi: "+str(manhattan(users["Ania"],users["Ela"]))
 def computeNearestNeighbor(username, users):
     """dla danego użytkownika, zwróć listę innych użytkowników według bliskości preferencji"""
-    lista=users.copy()
     odleglosc={}
     distances = []
-    kl=users.keys()
-    del lista[username]
-    for klucz in lista:
-        odleglosc[klucz]=manhattan(users[username], lista[klucz])
-    sort1=sorted(odleglosc.values())
-    distances=sorted(odleglosc, key=odleglosc.get)
-    print sorted(odleglosc.items(), key=lambda x:x[1])
-    # TODO: wpisz kod
+    for klucz in users:
+        if klucz!=username:
+            #odleglosc[klucz]=manhattan(users[username], users[klucz])
+            odleglosc[manhattan(users[username], users[klucz])]=klucz
+    #distances=sorted(odleglosc, key=odleglosc.get)
+    distances=sorted(odleglosc.items(), key=lambda x:x[0])
+    print str(username)+", twoi najblizsi sasiedzi to: "+str(distances)
     return distances
 computeNearestNeighbor("Ania",users)
 
@@ -55,14 +53,19 @@ def recommend(username, users):
     """Zwróć listę rekomendacji dla użytkownika"""
     # znajdź preferencje najbliższego sąsiada
     nearest = computeNearestNeighbor(username, users)[0][1]
-
-    recommendations = []
+    recommendations ={}
+    for klucz in users:
+        if klucz==nearest: #poszukiwanie najblizszego sasiada w danym slowniku
+            for kl in users[klucz]: #wylowienie slownika uzytkownika ze slownika glownego
     # zarekomenduj użytkownikowi wykonawcę, którego jeszcze nie ocenił, a zrobił to jego najbliższy sąsiada
-    # TODO: wpisz kod
+                if kl not in users[username].keys():    #szukanie zespolow, ktore nie byly sluchane przez uzytkownika, a tylko przez sasiada
+                    #recommendations.append(kl)
+                    recommendations[kl]=users[nearest][kl]    
+    print str(username)+", możesz poznać nowe zespoły, które ocenił Twój najbliższy sąsiad: "+str(recommendations)
     # using the fn sorted for variety - sort is more efficient
     return sorted(recommendations, key=lambda artistTuple: artistTuple[1], reverse = True)
 
 # przykłady
 
-#print( recommend('Hela', users))
-#print( recommend('Celina', users))
+recommend('Hela', users)
+recommend('Celina', users)
